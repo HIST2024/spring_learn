@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="day03-demo04-transfer" />
+        <module name="day02-demo08-proxy" />
+        <module name="day04-demo04-restful" />
+        <module name="day05-demo01-ssm" />
+        <module name="day02-demo07-junit" />
+        <module name="day01-demo01-ioc" />
+        <module name="day03-demo05-transfer-declare" />
+        <module name="day03-demo06-transfer-final" />
+        <module name="day04-demo02-springmvc" />
+        <module name="day02-demo03-mybatis-base" />
+        <module name="day03-demo01-proxy" />
+        <module name="day04-demo03-request-response" />
+        <module name="day02-demo06-mybatis-end" />
+        <module name="day01-demo02-ioc" />
+        <module name="day04-demo1-springmvc" />
+        <module name="day02-demo03-mybatis-final" />
+        <module name="day02-demo05-mybatis-start" />
+        <module name="day02-demo01-annotation" />
+        <module name="day02-demo02-ioc" />
+        <module name="day03-demo03-aop-example" />
+        <module name="day01-demo03-ioc" />
+        <module name="day03-demo02-aop" />
+        <module name="day04-demo5-rest-case" />
+        <module name="day01-demo00-ioc" />
+        <module name="day05-demo02-interceptor" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="day" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

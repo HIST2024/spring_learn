@@ -1,0 +1,5 @@
+# Project exclude paths
+/day04-demo04-restful/target/
+/day04-demo5-rest-case/target/
+/day05-demo01-ssm/target/
+/day05-demo02-interceptor/target/

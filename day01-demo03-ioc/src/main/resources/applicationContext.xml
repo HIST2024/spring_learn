@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 1.创建spring控制的资源
+              1). id 是这个bean的标识, 可以自定义,但是最好见名知意
+              2). class 指定实现类的全限定名
+              3). name效果相当于id (用于多人协同开发)
+              4). scope 作用范围
+                    I. 单例 singleton (默认)
+                        1). 这个类的实例只会有一个
+                        2). 时机 : 饿汉单例 (工厂一加载配置文件,就会创建该类实例)
+
+                    II. 原型 prototype , 多例
+                        1). 这个类的实例,每获取一次,就会创建一个
+                        2). 时机: 懒汉多例(工厂加载配置文件时不创建该类实例,每获取一次, 就创建一次)
+              5). 生命周期
+                    I. init-method : 指定初始化方法 (public void 方法名(无参)... )
+                        1). 执行时机: 对象创建时调用prototype
+                        2). 注意当前bean是singleton还是
+                    II. destroy-method : 指定销毁方法
+                        1). 执行时机: 对象销毁前调用
+                        2). 情况
+                            a. 单例: 单例的bean放在ioc容器中, 那么ioc容器销毁,这个bean就会被销毁
+                            b. 原型 : 原型的bean不放ioc容器中,那么ioc容器销毁,这个bean不会销毁,自然不会调用destroy方法
+
+      -->
+   <!-- <bean id="userService"
+          class="com.itheima.service.impl.UserServiceImpl"
+          name="userService2,userService3"
+          scope="prototype"
+          init-method="init"
+          destroy-method="destroy"
+    />-->
+
+    <!--
+        TODO: bean的创建方式
+        1. bean标签直接配置 (如上)
+            限制: 需要知道类名
+        2. 工厂方法(如下)
+            使用场景: 不需要知道类名,只需要知道此类对象如何创建即可
+            1). 静态工厂 : 创建对象的方法是静态的
+            2). 实例工厂 : 创建对象的方法是非静态的
+    -->
+    <!--
+        静态工厂原理(反射) (框架底层: 伪代码写主要逻辑)
+        //   StaticFactory sf = null;
+        //   Object object = sf.gtObject();
+        //   iocMap.put("userService4",object);
+        Class clazz = Class.forName("com.itheima.factory.StaticFactory");
+        Method method = clazz.getMethod("getObject");
+        Object object =  method.invoke(null);
+        iocMap.put("userService4",object);
+
+    -->
+<!--    <bean id="userService4" class="com.itheima.factory.StaticFactory"
+          factory-method="getObject"/>-->
+
+    <!--
+        实例工厂原理:
+                    //   InstanceFactory if = new InstanceFactory();
+                    //   Object object = if.gtObject();
+                //   iocMap.put("userService5",object);
+        第一个bean标签:
+            Class clazz = Class.forName("com.itheima.factory.InstanceFactory");
+            Object ifObj = clazz.newInstance();
+            iocMap.put("if",ifObj);
+        第二个bean标签:
+            Object ifObj = iocMap.get("if");
+            Class clazz = ifObj.getClass();
+            Method method = clazz.getMethod("getObject");
+            Object object =  method.invoke(ifObj);
+            iocMap.put("userService5",object);
+    -->
+<!--    <bean id="if" class="com.itheima.factory.InstanceFactory"/>
+    <bean id="userService5" factory-bean="if" factory-method="getObject"/>-->
+
+    <!--
+        TODO: set注入
+        1. 底层原理: (反射)
+            // UserServiceImpl2 obj = new UserServiceImpl2();
+            // obj.setName("zs");
+
+            //这个反射有前提: 有类名,而且有空参构造和set方法
+            Class clazz = Class.forName("com.itheima.factory.UserServiceImpl2");
+            Object obj = clazz.newInstance();
+
+            <property name="name" value="zs"/>原理
+                //方法名: setName = set + property.name
+                //方法的参数类型: 为了唯一确定一个方法(重载机制),可以通过property.name的类型得知(java内省机制)
+            Method setName = clazz.getMethod("setName",String.class);
+                //property.value得到方法参数
+            setName.invoke(obj,"zs");
+
+        2. 编写 : bean标签中写property子标签
+            1). name : 要注入的属性名
+            2). value : 要注入的属性值
+                注意: 如果要注入的属性值不是String或8大基本类型包装类,就需要用ref引用
+                ref(reference 引用) : 实际上是从ioc容器中获取实例
+
+    -->
+ <!--   <bean id="userDao" class="com.itheima.dao.impl.UserDaoImpl"/>
+    <bean id="userService6" class="com.itheima.service.impl.UserServiceImpl2">
+        <property name="name" value="zs"/>
+        <property name="age" value="18"/>
+        <property name="dao" ref="userDao"/>
+    </bean>-->
+
+    <!--
+        # 构造器注入(了解)
+          Class clazz = Class.forName("com.itheima.factory.UserServiceImpl2");
+          Constructor constructor = clazz.getConstructor(String.class,Integer.class,UserDao.class);
+          Object obj = constructor.newInstance("zs",18,userDao);
+          iocMap.put("userService6",obj);
+    -->
+<!--    <bean id="userDao" class="com.itheima.dao.impl.UserDaoImpl"/>
+    <bean id="userService6" class="com.itheima.service.impl.UserServiceImpl3">
+        <constructor-arg name="name" value="zs"/>
+        <constructor-arg  name="age" value="18"/>
+        <constructor-arg  name="dao" ref="userDao"/>
+    </bean>-->
+<!--    <bean id="userService6" class="com.itheima.service.impl.UserServiceImpl3"/>-->
+
+   <!-- <bean id="userServiceImpl7" class="com.itheima.service.impl.UserServiceImpl4">
+        <property name="list">
+            <list>
+                <value>zs</value>
+                <value>ls</value>
+                <value>ww</value>
+            </list>
+        </property>
+        <property name="p">
+            <props>
+                <prop key="username">admin</prop>
+                <prop key="password">123</prop>
+            </props>
+        </property>
+        <property name="array">
+            <array>
+                <value>100</value>
+                <value>200</value>
+            </array>
+        </property>
+        <property name="set">
+            <set>
+                <value>ml</value>
+                <value>qq</value>
+            </set>
+        </property>
+        <property name="map">
+            <map>
+                <entry key="name" value="zhangsan"/>
+                <entry key="age" value="18"/>
+            </map>
+        </property>
+    </bean>-->
+    <!--
+        # todo : spel
+        1. #{}
+            1). 表示数据引用 : 从ioc容器中获取数据
+                非string和基本类型包装类,通过它可以不用ref
+            2). 支持运算
+            了解
+        2. ${}
+            1). 表示数据引用 : 从配置文件中获取数据
+
+    -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <bean id="userDao" class="com.itheima.dao.impl.UserDaoImpl"/>
+    <bean id="userService8" class="com.itheima.service.impl.UserServiceImpl2">
+       <!-- <property name="name" value="zs"/>
+        <property name="age" value="18"/>
+        <property name="dao" ref="userDao"/>-->
+   <!--     <property name="name" value="#{'ls'}"/>
+        <property name="age" value="#{19 + 1}"/>
+        <property name="dao" value="#{userDao}"/>-->
+        <property name="name" value="${jdbc.url}"/>
+        <property name="age" value="${jdbc.age}"/>
+        <property name="dao" value="#{userDao}"/>
+    </bean>
+</beans>
